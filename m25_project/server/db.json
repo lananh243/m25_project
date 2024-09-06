@@ -1,0 +1,46 @@
+{
+  "admin": [
+    {
+      "id": 1,
+      "name": "Lan Anh",
+      "email": "lanh@gmail.com",
+      "password": "12345678",
+      "image": "https://haycafe.vn/wp-content/uploads/2021/11/Anh-avatar-dep-chat-lam-hinh-dai-dien.jpg"
+    }
+  ],
+  "logout": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    },
+    {
+      "id": 3
+    },
+    {
+      "id": 4
+    },
+    {
+      "id": 5
+    },
+    {
+      "id": 6
+    },
+    {
+      "id": 7
+    },
+    {
+      "id": 8
+    },
+    {
+      "id": 9
+    },
+    {
+      "id": 10
+    },
+    {
+      "id": 11
+    }
+  ]
+}
