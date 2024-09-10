@@ -4,7 +4,8 @@ import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Button, Modal } from "react-bootstrap";
 import { useRouter } from "next/navigation";
-export default function page() {
+
+export default function Page() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,11 +16,14 @@ export default function page() {
   });
   const [show, setShow] = useState(false);
   const route = useRouter();
+
   const handleClose = () => {
     setShow(false);
     route.push("/admin");
   };
+
   const [accAdmin, setAccAdmin] = useState([]);
+
   useEffect(() => {
     const getData = async () => {
       let res = await axios.get("http://localhost:8080/admin");
@@ -27,6 +31,7 @@ export default function page() {
     };
     getData();
   }, []);
+
   const handleValidation = () => {
     let isValid = true;
     const newErrors = { name: "", email: "", password: "" };
@@ -47,6 +52,7 @@ export default function page() {
     setErrors(newErrors);
     return isValid;
   };
+
   const handleSubmit = () => {
     if (handleValidation()) {
       const matchedAdmin = accAdmin.find(
@@ -57,19 +63,27 @@ export default function page() {
       );
 
       if (matchedAdmin) {
+        const adminData = {
+          name: name,
+          email: email,
+          password: password,
+        };
+        localStorage.setItem("admin", JSON.stringify(adminData));
+
         setShow(true);
       } else {
         alert("Thông tin đăng nhập không chính xác");
         setName("");
         setEmail("");
         setPassword("");
+        localStorage.removeItem("admin");
       }
     }
   };
 
   return (
     <div className="flex">
-      <div className="w-2/5 h-screen bg-purple-200 ">
+      <div className="w-2/4 h-screen bg-purple-700 ">
         <h1 className="text-3xl font-bold text-center my-12">
           ĐĂNG NHẬP ADMIN
         </h1>
@@ -77,27 +91,24 @@ export default function page() {
           <p>UserName</p>
           <input
             type="text"
-            name=""
-            id=""
             className="w-80 h-8 py-4 p-3"
+            value={name}
             onChange={(e) => setName(e.target.value)}
           />
           {errors.name && <p className="text-red-400">{errors.name}</p>}
           <p className="py-3">Email</p>
           <input
             type="email"
-            name=""
-            id=""
             className="w-80 h-8 py-4 p-3"
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           {errors.email && <p className="text-red-400">{errors.email}</p>}
           <p className="my-3">Password</p>
           <input
             type="password"
-            name=""
-            id=""
             className="w-80 h-8 py-4 p-3"
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
           {errors.password && <p className="text-red-400">{errors.password}</p>}
@@ -125,7 +136,7 @@ export default function page() {
             alt=""
             className="w-10 h-10"
           />
-          Bạn đã đăng nhập với Adim thành công!
+          Bạn đã đăng nhập với Admin thành công!
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>

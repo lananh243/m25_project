@@ -11,16 +11,22 @@ import { Autoplay } from "swiper/modules";
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
-
+  const route = useRouter();
   const handleMouseEnter = () => {
     setIsMenuVisible(true);
   };
-
   const handleMouseLeave = () => {
     setIsMenuVisible(false);
+  };
+  const handleRegister = () => {
+    route.push("/register");
+  };
+  const handleLogin = () => {
+    route.push("/login");
   };
   return (
     <>
@@ -72,24 +78,24 @@ export default function Home() {
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
               >
-                {/* Icon and label */}
                 <button className="h-10 w-10 bg-white flex justify-center items-center rounded-full">
                   <FontAwesomeIcon icon={faUserTie} className="w-5 h-5" />
                 </button>
                 <span className="text-white">Tài khoản</span>
-
-                {/* Dropdown menu */}
                 {isMenuVisible && (
                   <div className="absolute top-12 left-0 bg-white text-black rounded-lg shadow-lg w-32">
-                    {/* Triangle arrow */}
                     <div className="absolute -top-2 left-4 w-4 h-4 bg-white transform rotate-45"></div>
-
-                    {/* Options */}
                     <div className="flex flex-col py-2 px-4">
-                      <button className="text-sm py-1 px-2 hover:bg-gray-200 cursor-pointer rounded-md text-left">
+                      <button
+                        className="text-sm py-1 px-2 hover:bg-gray-200 cursor-pointer rounded-md text-left"
+                        onClick={handleLogin}
+                      >
                         Đăng nhập
                       </button>
-                      <button className="text-sm py-1 px-2 hover:bg-gray-200 cursor-pointer rounded-md text-left mt-1">
+                      <button
+                        className="text-sm py-1 px-2 hover:bg-gray-200 cursor-pointer rounded-md text-left mt-1"
+                        onClick={handleRegister}
+                      >
                         Đăng ký
                       </button>
                     </div>
@@ -154,31 +160,31 @@ export default function Home() {
           <SwiperSlide>
             <img
               src="https://theme.hstatic.net/1000313040/1000406925/14/ms_banner_img1.jpg?v=2130"
-              alt="slide 1"
+              alt="Slide 1"
             />
           </SwiperSlide>
           <SwiperSlide>
             <img
               src="https://theme.hstatic.net/1000313040/1000406925/14/ms_banner_img2.jpg?v=2130"
-              alt="slide 2"
+              alt="Slide 2"
             />
           </SwiperSlide>
           <SwiperSlide>
             <img
               src="https://theme.hstatic.net/1000313040/1000406925/14/ms_banner_img3.jpg?v=2130"
-              alt="slide 3"
+              alt="Slide 3"
             />
           </SwiperSlide>
           <SwiperSlide>
             <img
               src="https://theme.hstatic.net/1000313040/1000406925/14/ms_banner_img4.jpg?v=2130"
-              alt="slide 4"
+              alt="Slide 4"
             />
           </SwiperSlide>
           <SwiperSlide>
             <img
               src="https://theme.hstatic.net/1000313040/1000406925/14/ms_banner_img5.jpg?v=2130"
-              alt="slide 5"
+              alt="Slide 5"
             />
           </SwiperSlide>
         </Swiper>
@@ -194,7 +200,7 @@ export default function Home() {
         />
       </div>
       <div className="flex justify-evenly">
-        <div className="w-72 overflow-hidden rounded-md shadow-lg">
+        <div className="w-72 overflow-hidden rounded-xl shadow-lg">
           <img
             src="https://product.hstatic.net/1000313040/product/post_fb_trung_thu_5_1c555ac0719f4cf4808183ddf1ad31a8_large.png"
             alt=""
@@ -224,7 +230,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-        <div className="w-72 overflow-hidden rounded-md shadow-lg">
+        <div className="w-72 overflow-hidden rounded-xl shadow-lg">
           <img
             src="https://product.hstatic.net/1000313040/product/post_fb_trung_thu_6_023d0b82f1f24f79840d4cd7f60f3704_large.png"
             alt=""
@@ -256,7 +262,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-        <div className="w-72 overflow-hidden rounded-md shadow-lg">
+        <div className="w-72 overflow-hidden rounded-xl shadow-lg">
           <img
             src="https://product.hstatic.net/1000313040/product/post_fb_trung_thu_3_521c1313a07e426fb9272923c86b10b4_large.png"
             alt=""
@@ -286,7 +292,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-        <div className="w-72 overflow-hidden rounded-md shadow-lg">
+        <div className="w-72 overflow-hidden rounded-xl shadow-lg">
           <img
             src="https://product.hstatic.net/1000313040/product/post_fb_trung_thu_13_4bb3766bbea344248223a11c870e73bd_large.png"
             alt=""
@@ -318,7 +324,7 @@ export default function Home() {
         </div>
       </div>
       <div className="flex justify-evenly my-12">
-        <div className="w-72 overflow-hidden rounded-md shadow-md">
+        <div className="w-72 overflow-hidden rounded-xl shadow-lg">
           <img
             src="https://product.hstatic.net/1000313040/product/post_fb_trung_thu_12_6bb2feb3703a4487a1820c21b753be7b_large.png"
             alt=""
@@ -348,7 +354,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-        <div className="w-72 overflow-hidden rounded-md shadow-lg">
+        <div className="w-72 overflow-hidden rounded-xl shadow-lg">
           <img
             src="https://product.hstatic.net/1000313040/product/post_fb_trung_thu_8_bb9603b9dde34551a89dc8e5a8ce2283_large.png"
             alt=""
@@ -378,7 +384,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-        <div className="w-72 overflow-hidden rounded-md shadow-lg">
+        <div className="w-72 overflow-hidden rounded-xl shadow-lg">
           <img
             src="https://product.hstatic.net/1000313040/product/post_fb_trung_thu_10_c95fec74458445acbbf052ec7c2f5692_large.png"
             alt=""
@@ -408,7 +414,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-        <div className="w-72 overflow-hidden rounded-md shadow-lg">
+        <div className="w-72 overflow-hidden rounded-xl shadow-lg">
           <img
             src="https://product.hstatic.net/1000313040/product/post_fb_trung_thu_13_4bb3766bbea344248223a11c870e73bd_large.png"
             alt=""
@@ -440,7 +446,7 @@ export default function Home() {
         </div>
       </div>
       <div className="justify-center flex">
-        <button className="w-32 h-10 bg-rose-900 rounded-lg font-bold text-white">
+        <button className="w-32 h-10 bg-rose-900 rounded-xl font-bold text-white">
           XEM THÊM
         </button>
       </div>
@@ -456,7 +462,7 @@ export default function Home() {
         />
       </div>
       <div className="flex justify-evenly my-12">
-        <div className="w-72 overflow-hidden rounded-md shadow-md">
+        <div className="w-72 overflow-hidden rounded-xl shadow-md">
           <img
             src="https://product.hstatic.net/1000313040/product/product_website_19_e9c104479fa343f7829e7ddb39417921_large.png"
             alt=""
@@ -486,7 +492,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-        <div className="w-72 overflow-hidden rounded-md shadow-md">
+        <div className="w-72 overflow-hidden rounded-xl shadow-md">
           <img
             src="https://product.hstatic.net/1000313040/product/53_c2a32321b1c4417d89a727f048d06659_large.png"
             alt=""
@@ -516,7 +522,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-        <div className="w-72 overflow-hidden rounded-md shadow-md">
+        <div className="w-72 overflow-hidden rounded-xl shadow-md">
           <img
             src="https://product.hstatic.net/1000313040/product/1__1__72ac901740aa4ae79581213a5dd3a8f9_large.png"
             alt=""
@@ -546,7 +552,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-        <div className="w-72 overflow-hidden rounded-md shadow-md">
+        <div className="w-72 overflow-hidden rounded-xl shadow-md">
           <img
             src="https://product.hstatic.net/1000313040/product/7_491649042b62455294abb5468b891337_large.png"
             alt=""
@@ -578,7 +584,7 @@ export default function Home() {
         </div>
       </div>
       <div className="flex justify-evenly my-12">
-        <div className="w-72 overflow-hidden rounded-md shadow-md">
+        <div className="w-72 overflow-hidden rounded-xl shadow-md">
           <img
             src="https://product.hstatic.net/1000313040/product/22_2106d23eac324a0f8223f62090918d18_large.png"
             alt=""
@@ -608,7 +614,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-        <div className="w-72 overflow-hidden rounded-md shadow-md">
+        <div className="w-72 overflow-hidden rounded-xl shadow-md">
           <img
             src="https://product.hstatic.net/1000313040/product/product_website_30_805c4673c8eb44e7a93d6bc1abf0bb67_large.png"
             alt=""
@@ -638,7 +644,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-        <div className="w-72 overflow-hidden rounded-md shadow-md">
+        <div className="w-72 overflow-hidden rounded-xl shadow-md">
           <img
             src="https://product.hstatic.net/1000313040/product/25_ed8d6ef7bdd84105a3864ada1a077091_large.jpg"
             alt=""
@@ -670,7 +676,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-        <div className="w-72 overflow-hidden rounded-md shadow-md">
+        <div className="w-72 overflow-hidden rounded-xl shadow-md">
           <img
             src="https://product.hstatic.net/1000313040/product/2__1__5eb9e5788828456d8f78df94dc11febd_large.png"
             alt=""
@@ -704,7 +710,7 @@ export default function Home() {
         </div>
       </div>
       <div className="justify-center flex">
-        <button className="w-32 h-10 bg-rose-900 rounded-lg font-bold text-white">
+        <button className="w-32 h-10 bg-rose-900 rounded-xl font-bold text-white">
           XEM THÊM
         </button>
       </div>

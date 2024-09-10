@@ -10,35 +10,33 @@ import { faCartPlus } from "@fortawesome/free-solid-svg-icons";
 import { faPanorama } from "@fortawesome/free-solid-svg-icons";
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useEffect, useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import { Button, Modal } from "react-bootstrap";
+import { useRouter } from "next/navigation";
+import { CardContent } from "@/components/ui/card";
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
-import { TrendingUp } from "lucide-react";
-import axios from "axios";
-import { Button, Modal } from "react-bootstrap";
-import { useRouter } from "next/navigation";
 
 export default function page() {
-  const [admin, setAdmin] = useState([]);
+  const [admin, setAdmin] = useState<any>([]);
   const route = useRouter();
+  // // kiểm tra xem đã đăng nhập hay chưa
+  // let check = localStorage.getItem("admin");
+  // if (!check) {
+  //   route.push("/login_admin");
+  // }
+  // Kiểm tra xem đã đăng nhập hay chưa
   useEffect(() => {
-    const getData = async () => {
-      let res = await axios.get("http://localhost:8080/admin");
-      setAdmin(res.data);
-    };
-    getData();
-  }, []);
+    const adminData = localStorage.getItem("admin");
+    if (!adminData) {
+      route.push("/login_admin");
+    } else {
+      setAdmin(JSON.parse(adminData));
+    }
+  }, [route]);
   const chartData = [
     { month: "January", desktop: 186, mobile: 80 },
     { month: "February", desktop: 305, mobile: 200 },
@@ -64,11 +62,19 @@ export default function page() {
   };
   const handleMove = () => {
     setShow(false);
-    // route.push("/login_admin");
-    setAdmin([]);
+    localStorage.removeItem("admin");
+    route.push("/login_admin");
+    setAdmin(null);
+  };
+  const handleUser = () => {
+    route.push("/admin/users");
+  };
+  const handleProduct = () => {
+    route.push("/admin/products");
   };
   return (
     <div className="flex h-screen">
+      {/* Menu */}
       <div className="w-1/4 bg-rose-600">
         <div className="py-14 flex justify-center">
           <span className="text-xl font-bold">Quản lí</span>
@@ -81,12 +87,15 @@ export default function page() {
             ></FontAwesomeIcon>
             <span className="mx-5">Trang chủ</span>
           </div>
-          <div className="flex items-center my-14">
+          <div
+            className="flex items-center my-14 hover:bg-gray-50 hover:cursor-pointer h-9 rounded"
+            onClick={handleUser}
+          >
             <FontAwesomeIcon
               icon={faUserGroup}
               className="w-6 h-6"
             ></FontAwesomeIcon>
-            <span className="mx-5 whitespace-nowrap">Quản lí user</span>
+            <span className="mx-5 whitespace-nowrap ">Quản lí user</span>
           </div>
           <div className="flex items-center my-14">
             <FontAwesomeIcon
@@ -95,7 +104,10 @@ export default function page() {
             ></FontAwesomeIcon>
             <span className="mx-5 whitespace-nowrap">Quản lí danh mục</span>
           </div>
-          <div className="flex items-center my-14">
+          <div
+            className="flex items-center my-14 hover:bg-gray-50 hover:cursor-pointer h-9 rounded"
+            onClick={handleProduct}
+          >
             <FontAwesomeIcon
               icon={faPager}
               className="w-6 h-6"
@@ -113,6 +125,8 @@ export default function page() {
           </div>
         </div>
       </div>
+
+      {/* Header */}
       <div className="w-full bg-slate-50">
         <div className="w-full h-28 bg-gray-100 flex items-center justify-between">
           <div className="flex w-11/12 justify-between m-auto">
@@ -120,7 +134,7 @@ export default function page() {
               <input
                 type="text"
                 placeholder="Tìm kiếm ..."
-                className="pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="pl-10 pr-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <FontAwesomeIcon
                 icon={faSearch}
@@ -132,32 +146,29 @@ export default function page() {
                 icon={faBell}
                 className="w-6 h-6"
               ></FontAwesomeIcon>
-              {admin.length > 0 &&
-                admin.map((admin: any) => {
-                  return (
-                    <div className="flex items-center">
-                      <button className="w-12 h-12 rounded-full bg-red-300 flex justify-center items-center">
-                        <img
-                          src={admin.image}
-                          alt=""
-                          className="rounded-full"
-                        />
-                      </button>
-                      <span className="mx-7">{admin.name}</span>
-                    </div>
-                  );
-                })}
+              {admin && (
+                <div className="flex items-center">
+                  <button className="w-12 h-12 rounded-full bg-red-300 flex justify-center items-center">
+                    <img
+                      src="https://i.pinimg.com/originals/9f/81/66/9f81666e83e9a49f1c11fa0961fe220d.jpg"
+                      alt=""
+                      className="rounded-full"
+                    />
+                  </button>
+                  <span className="mx-7">{admin.name}</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
         <div className="flex justify-between py-10 w-11/12 m-auto">
-          <div className="w-80 bg-blue-400">
+          <div className="w-80 bg-blue-400 rounded">
             <h1 className="text-3xl mx-6 py-4 text-white">Sign up</h1>
             <div className="w-64 m-auto justify-between flex">
               <div></div>
               <span className="text-4xl font-bold text-white">128</span>
             </div>
-            <div className="w-64 m-auto justify-between flex my-3">
+            <div className="w-64 m-auto justify-between flex my-3 ">
               <FontAwesomeIcon
                 icon={faUser}
                 className="w-6 h-6 text-white"
@@ -165,7 +176,7 @@ export default function page() {
               <b className="text-white">+43 % </b>
             </div>
           </div>
-          <div className="w-80 bg-orange-300">
+          <div className="w-80 bg-orange-300 rounded">
             <h1 className="text-3xl mx-6 py-4 text-white">Revenue</h1>
             <div className="w-64 m-auto justify-between flex">
               <div></div>
@@ -179,7 +190,7 @@ export default function page() {
               <b className="text-white">+80 % </b>
             </div>
           </div>
-          <div className="w-80 bg-rose-300">
+          <div className="w-80 bg-rose-300 rounded">
             <h1 className="text-3xl mx-6 py-4 text-white">Product sold</h1>
             <div className="w-64 m-auto justify-between flex">
               <div></div>

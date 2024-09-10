@@ -8,39 +8,92 @@
       "image": "https://haycafe.vn/wp-content/uploads/2021/11/Anh-avatar-dep-chat-lam-hinh-dai-dien.jpg"
     }
   ],
-  "logout": [
+  "users": [
     {
-      "id": 1
+      "id": 1,
+      "name": "Mai",
+      "role": "user",
+      "email": "mai@gmail.com",
+      "status": "Mở",
+      "active": true
     },
     {
-      "id": 2
+      "id": 2,
+      "name": "Ngọc",
+      "role": "user",
+      "email": "ngoc@gmail.com",
+      "status": "Mở",
+      "active": false
     },
     {
-      "id": 3
+      "id": 3,
+      "name": "Liên",
+      "role": "user",
+      "email": "lien@gmail.com",
+      "status": "Mở",
+      "active": false
+    }
+  ],
+  "products": [
+    {
+      "id": 4,
+      "nameProduct": "SONG LỘC",
+      "price": "430,000",
+      "image": "https://product.hstatic.net/1000313040/product/post_fb_trung_thu_13_4bb3766bbea344248223a11c870e73bd_large.png",
+      "code": "SL90"
     },
     {
-      "id": 4
+      "id": 5,
+      "nameProduct": "TAM NGUYỆT LỘC",
+      "price": "430,000",
+      "image": "https://product.hstatic.net/1000313040/product/post_fb_trung_thu_12_6bb2feb3703a4487a1820c21b753be7b_large.png",
+      "code": "TNL90",
+      "category": "Bánh truyền thống"
     },
     {
-      "id": 5
+      "id": 6,
+      "nameProduct": "s222222w",
+      "price": "s5554w2",
+      "image": "https://firebasestorage.googleapis.com/v0/b/m25-project-7bb66.appspot.com/o/upload-image%2Fphong-canh-dep-o-viet-nam-yody-vn-3.jpg?alt=media&token=a03ead05-2a9b-4774-86df-98c8f17e5f43",
+      "code": "21111111"
     },
     {
-      "id": 6
-    },
-    {
+      "nameProduct": "vaaaaaaad",
+      "price": "0wwwwwwwwwwwws",
+      "image": "https://firebasestorage.googleapis.com/v0/b/m25-project-7bb66.appspot.com/o/upload-image%2Fphong-canh-dep-o-viet-nam-yody-vn-3.jpg?alt=media&token=0edfff86-d3fe-457d-9adf-07f50dc97c4c",
+      "code": "sa23",
+      "categoryId": 0,
       "id": 7
     },
     {
+      "nameProduct": "ksqfhh",
+      "price": "0dssssssssssss",
+      "image": "https://firebasestorage.googleapis.com/v0/b/m25-project-7bb66.appspot.com/o/upload-image%2Fimages.jpg?alt=media&token=542c71ce-4d0b-4d96-a88a-1ffc35f4dfb5",
+      "code": "sdddddddddd",
+      "categoryId": 0,
       "id": 8
+    }
+  ],
+  "categorys": [
+    {
+      "id": 3,
+      "name": "Bánh trung thu chay"
     },
     {
-      "id": 9
+      "id": 4,
+      "name": "Bánh trung thu mặn"
     },
     {
-      "id": 10
+      "id": 5,
+      "name": "Bánh trung thu hiện đại"
     },
     {
-      "id": 11
+      "name": "Bánh nướng",
+      "id": 6
+    },
+    {
+      "name": "Bánh dẻo",
+      "id": 7
     }
   ]
 }
