@@ -7,6 +7,8 @@ import {
   faCalendarPlus,
   faPager,
   faBell,
+  faEye,
+  faEyeSlash,
 } from "@fortawesome/free-solid-svg-icons";
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useEffect, useState } from "react";
@@ -29,6 +31,7 @@ export default function Page() {
   const [sortName, setSortName] = useState("");
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const route = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const userState = useSelector((state: any) => state.userReducer.users);
   useEffect(() => {
@@ -46,14 +49,20 @@ export default function Page() {
   const [inputValue, setInputValue] = useState({
     name: "",
     email: "",
-    role: "",
+    password: "",
+    repassword: "",
+    phone: "",
+    address: "",
     active: true,
   });
 
   const [err, setErr] = useState({
     name: "",
     email: "",
-    role: "",
+    password: "",
+    repassword: "",
+    phone: "",
+    address: "",
     active: "",
   });
 
@@ -61,11 +70,22 @@ export default function Page() {
     setInputValue({
       name: "",
       email: "",
-      role: "",
+      password: "",
+      repassword: "",
+      phone: "",
+      address: "",
       active: true,
     });
   };
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
+  const validatePhoneNumber = (phone: string) => {
+    const phoneRegex = /^(0[3-9][0-9]{8})$/;
+    return phoneRegex.test(phone);
+  };
   const handleAddUser = async () => {
     let valid = true;
     let newErr = { ...err };
@@ -78,21 +98,51 @@ export default function Page() {
     if (!inputValue.email) {
       newErr.email = "Email ko được để trống";
       valid = false;
+    } else if (!validateEmail(inputValue.email)) {
+      newErr.email = "Email ko đúng định dạng";
+      valid = false;
     } else {
       newErr.email = "";
     }
-    if (!inputValue.role) {
-      newErr.role = "Vai trò ko được để trống";
+    if (!inputValue.password) {
+      newErr.password = "Mật khẩu ko đc để trống";
+      valid = false;
+    } else if (inputValue.password.length < 8) {
+      newErr.password = "Mật khẩu phải có ít nhất 8 ký tự";
       valid = false;
     } else {
-      newErr.role = "";
+      newErr.password = "";
+    }
+    if (inputValue.password !== inputValue.repassword) {
+      newErr.repassword = "Mật khẩu ko khớp";
+      valid = false;
+    } else {
+      newErr.repassword = "";
+    }
+    if (!inputValue.phone) {
+      newErr.phone = "Số điện thoại ko đc để trống";
+      valid = false;
+    } else if (!validatePhoneNumber(inputValue.phone)) {
+      newErr.phone = "Số điện thoại ko hợp lệ";
+      valid = false;
+    } else {
+      newErr.phone = "";
+    }
+    if (!inputValue.address) {
+      newErr.address = "Địa chỉ ko đc để trống";
+      valid = false;
+    } else {
+      newErr.address = "";
     }
     setErr(newErr);
     if (valid) {
       const newUser = {
         name: inputValue.name,
         email: inputValue.email,
-        role: inputValue.role,
+        password: inputValue.password,
+        repassword: inputValue.repassword,
+        phone: inputValue.phone,
+        address: inputValue.address,
         active: true,
       };
       try {
@@ -114,7 +164,6 @@ export default function Page() {
 
   const handleClose = () => setShow(false);
   const handleShow = () => {
-    // setSelectedUser(userId);
     setShow(true);
   };
 
@@ -161,7 +210,9 @@ export default function Page() {
       console.error("Lỗi khi cập nhật trạng thái người dùng", err);
     }
   };
-
+  const handlePassword = () => {
+    setShowPassword((prevState) => !prevState);
+  };
   const [showModal, setShowModal] = useState(false);
 
   const handleCloseStatus = () => setShowModal(false);
@@ -272,7 +323,8 @@ export default function Page() {
                 <th className="p-3">STT</th>
                 <th className="p-3">Tên đăng nhập</th>
                 <th className="p-3">Email</th>
-                <th className="p-3">Role</th>
+                <th className="p-3">Số điện thoại</th>
+                <th className="p-3">Địa chỉ</th>
                 <th className="p-3">Status</th>
                 <th className="p-3">Action</th>
               </tr>
@@ -286,7 +338,8 @@ export default function Page() {
                   <td className="p-3">{user.id}</td>
                   <td className="p-3">{user.name}</td>
                   <td className="p-3">{user.email}</td>
-                  <td className="p-3">{user.role}</td>
+                  <td className="p-3">{user.phone}</td>
+                  <td className="p-3">{user.address}</td>
                   <td className="p-3">{user.active ? "active" : "inactive"}</td>
                   <td className="p-3">
                     <button
@@ -338,16 +391,83 @@ export default function Page() {
           <br />
           {err.email && <span className="text-red-400">{err.email}</span>}
           <br />
-
-          <p>Vai trò</p>
+          <p>Mật khẩu</p>
+          <div className="relative w-96">
+            <input
+              type="text"
+              className=" w-full h-8 border-2 border-solid border-gray-200 rounded"
+              name="password"
+              onChange={handleChange}
+            />
+            <div
+              className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
+              onClick={handlePassword}
+            >
+              {showPassword ? (
+                <FontAwesomeIcon
+                  icon={faEyeSlash}
+                  className="h-5 w-5 text-gray-600"
+                />
+              ) : (
+                <FontAwesomeIcon
+                  icon={faEye}
+                  className="h-5 w-5 text-gray-600"
+                />
+              )}
+            </div>
+          </div>
+          <br />
+          {err.password && <span className="text-red-400">{err.password}</span>}
+          <br />
+          <p>Nhập lại mật khẩu</p>
+          <div className="relative w-96">
+            <input
+              type="text"
+              className=" w-full h-8 border-2 border-solid border-gray-200 rounded"
+              name="repassword"
+              onChange={handleChange}
+            />
+            <div
+              className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
+              onClick={handlePassword}
+            >
+              {showPassword ? (
+                <FontAwesomeIcon
+                  icon={faEyeSlash}
+                  className="h-5 w-5 text-gray-600"
+                />
+              ) : (
+                <FontAwesomeIcon
+                  icon={faEye}
+                  className="h-5 w-5 text-gray-600"
+                />
+              )}
+            </div>
+          </div>
+          <br />
+          {err.repassword && (
+            <span className="text-red-400">{err.repassword}</span>
+          )}
+          <br />
+          <p>Số điện thoại </p>
           <input
             type="text"
             className=" w-96 h-8 border-2 border-solid border-gray-200 rounded"
-            name="role"
+            name="phone"
             onChange={handleChange}
           />
           <br />
-          {err.role && <span className="text-red-400">{err.role}</span>}
+          {err.phone && <span className="text-red-400">{err.phone}</span>}
+          <br />
+          <p>Địa chỉ</p>
+          <input
+            type="text"
+            className=" w-96 h-8 border-2 border-solid border-gray-200 rounded"
+            name="address"
+            onChange={handleChange}
+          />
+          <br />
+          {err.address && <span className="text-red-400">{err.address}</span>}
           <br />
         </Modal.Body>
         <Modal.Footer>

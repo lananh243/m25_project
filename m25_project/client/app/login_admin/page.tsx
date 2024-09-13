@@ -19,7 +19,7 @@ export default function Page() {
 
   const handleClose = () => {
     setShow(false);
-    route.push("/admin");
+    route.push("/admin/dashboard");
   };
 
   const [accAdmin, setAccAdmin] = useState([]);

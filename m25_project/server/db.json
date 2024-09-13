@@ -10,68 +10,81 @@
   ],
   "users": [
     {
-      "id": 1,
       "name": "Mai",
-      "role": "user",
       "email": "mai@gmail.com",
-      "status": "Mở",
-      "active": true
+      "password": "12345678",
+      "phone": "0972535367",
+      "address": "Vinh",
+      "repassword": "12345678",
+      "id": 1
     },
     {
-      "id": 2,
-      "name": "Ngọc",
+      "name": "Thoa",
+      "email": "thoa@gmail.com",
       "role": "user",
-      "email": "ngoc@gmail.com",
-      "status": "Mở",
-      "active": false
+      "password": "23456789",
+      "phone": "0972345325",
+      "address": "Lạng sơn",
+      "active": false,
+      "id": 2
     },
     {
-      "id": 3,
-      "name": "Liên",
-      "role": "user",
-      "email": "lien@gmail.com",
-      "status": "Mở",
-      "active": false
+      "name": "Hiền",
+      "email": "hien@gmail.com",
+      "password": "26377284",
+      "phone": "0972535578",
+      "address": "Tuyên quang",
+      "repassword": "26377284",
+      "active": true,
+      "id": 3
+    },
+    {
+      "name": "Linh",
+      "email": "linh@gmail.com",
+      "password": "12345678",
+      "repassword": "12345678",
+      "phone": "0972536356",
+      "address": "Hà Nội",
+      "active": true,
+      "id": 4
     }
   ],
   "products": [
     {
-      "id": 4,
+      "nameProduct": "NGỰ UYỂN AN KHANG",
+      "price": "652000",
+      "image": "https://firebasestorage.googleapis.com/v0/b/m25-project-7bb66.appspot.com/o/upload-image%2Fproduct_3.webp?alt=media&token=5089d3c7-321b-4e9a-b0f3-11d970290a2c",
+      "code": "NUAK90",
+      "categoryId": 7,
+      "quantity": 1,
+      "id": 1
+    },
+    {
       "nameProduct": "SONG LỘC",
-      "price": "430,000",
-      "image": "https://product.hstatic.net/1000313040/product/post_fb_trung_thu_13_4bb3766bbea344248223a11c870e73bd_large.png",
-      "code": "SL90"
+      "price": "150000",
+      "image": "https://firebasestorage.googleapis.com/v0/b/m25-project-7bb66.appspot.com/o/upload-image%2Fproduct_4.webp?alt=media&token=ca1f0931-a477-44ff-82ad-0d6243683199",
+      "code": "SL90",
+      "categoryId": 7,
+      "quantity": 1,
+      "id": 2
     },
     {
-      "id": 5,
-      "nameProduct": "TAM NGUYỆT LỘC",
-      "price": "430,000",
-      "image": "https://product.hstatic.net/1000313040/product/post_fb_trung_thu_12_6bb2feb3703a4487a1820c21b753be7b_large.png",
-      "code": "TNL90",
-      "category": "Bánh truyền thống"
+      "nameProduct": "SONG PHÚC",
+      "price": "300000",
+      "image": "https://firebasestorage.googleapis.com/v0/b/m25-project-7bb66.appspot.com/o/upload-image%2Fproduct_5.webp?alt=media&token=9093c13b-8957-4869-909d-25c6d95677b1",
+      "code": "SP90",
+      "categoryId": 4,
+      "quantity": 1,
+      "id": 3
     },
     {
-      "id": 6,
-      "nameProduct": "s222222w",
-      "price": "s5554w2",
-      "image": "https://firebasestorage.googleapis.com/v0/b/m25-project-7bb66.appspot.com/o/upload-image%2Fphong-canh-dep-o-viet-nam-yody-vn-3.jpg?alt=media&token=a03ead05-2a9b-4774-86df-98c8f17e5f43",
-      "code": "21111111"
-    },
-    {
-      "nameProduct": "vaaaaaaad",
-      "price": "0wwwwwwwwwwwws",
-      "image": "https://firebasestorage.googleapis.com/v0/b/m25-project-7bb66.appspot.com/o/upload-image%2Fphong-canh-dep-o-viet-nam-yody-vn-3.jpg?alt=media&token=0edfff86-d3fe-457d-9adf-07f50dc97c4c",
-      "code": "sa23",
-      "categoryId": 0,
-      "id": 7
-    },
-    {
-      "nameProduct": "ksqfhh",
-      "price": "0dssssssssssss",
-      "image": "https://firebasestorage.googleapis.com/v0/b/m25-project-7bb66.appspot.com/o/upload-image%2Fimages.jpg?alt=media&token=542c71ce-4d0b-4d96-a88a-1ffc35f4dfb5",
-      "code": "sdddddddddd",
-      "categoryId": 0,
-      "id": 8
+      "nameProduct": "NGŨ NGƯ VỌNG TUYỆT",
+      "price": "450000",
+      "image": "https://firebasestorage.googleapis.com/v0/b/m25-project-7bb66.appspot.com/o/upload-image%2Fproduct2.jpn.webp?alt=media&token=f3ce71a5-948e-4c31-b104-20a8a83af649",
+      "code": "NNVT90",
+      "categoryId": 4,
+      "quantity": 1,
+      "id": 4
     }
   ],
   "categorys": [
@@ -94,6 +107,34 @@
     {
       "name": "Bánh dẻo",
       "id": 7
+    }
+  ],
+  "carts": [
+    {
+      "idUser": 4,
+      "products": {
+        "nameProduct": "SONG PHÚC",
+        "price": "300000",
+        "image": "https://firebasestorage.googleapis.com/v0/b/m25-project-7bb66.appspot.com/o/upload-image%2Fproduct_5.webp?alt=media&token=9093c13b-8957-4869-909d-25c6d95677b1",
+        "code": "SP90",
+        "categoryId": 4,
+        "quantity": 1,
+        "id": 3
+      },
+      "id": 1
+    },
+    {
+      "idUser": 4,
+      "products": {
+        "nameProduct": "NGỰ UYỂN AN KHANG",
+        "price": "652000",
+        "image": "https://firebasestorage.googleapis.com/v0/b/m25-project-7bb66.appspot.com/o/upload-image%2Fproduct_3.webp?alt=media&token=5089d3c7-321b-4e9a-b0f3-11d970290a2c",
+        "code": "NUAK90",
+        "categoryId": 7,
+        "quantity": 1,
+        "id": 1
+      },
+      "id": 2
     }
   ]
 }

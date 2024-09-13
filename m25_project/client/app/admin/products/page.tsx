@@ -84,6 +84,7 @@ export default function Product() {
     image: "",
     code: "",
     categoryId: 0,
+    quantity: 1,
   });
 
   const [error, setError] = useState({
@@ -92,6 +93,7 @@ export default function Product() {
     image: "",
     code: "",
     categoryId: "",
+    quantity: "",
   });
 
   const reset = () => {
@@ -101,6 +103,7 @@ export default function Product() {
       code: "",
       image: "",
       categoryId: 0,
+      quantity: 1,
     });
     setImage("https://vnsteelthanglong.vn/core/img/default_image.png");
   };
@@ -138,6 +141,7 @@ export default function Product() {
         image: image,
         code: inputValue.code,
         categoryId: inputValue.categoryId,
+        quantity: inputValue.quantity,
       };
 
       try {
@@ -173,6 +177,7 @@ export default function Product() {
       code: "",
       image: "",
       categoryId: 0,
+      quantity: 1,
     });
     setImage("https://vnsteelthanglong.vn/core/img/default_image.png");
     setShow(true);
@@ -206,6 +211,7 @@ export default function Product() {
       image: product.image,
       code: product.code,
       categoryId: product.categoryId,
+      quantity: product.quantity,
     });
     setEditMode(true);
     setImage(product.image);

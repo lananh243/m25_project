@@ -1,5 +1,5 @@
-import { addNewProduct, deleteProduct, editProduct, getAllProduct, getCategory, searchNameProduct, sortProduct } from "@/app/service/product.service";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { addNewProduct, deleteProduct, editProduct, getAllProduct, getProductById, searchNameProduct, sortProduct } from "@/app/service/product.service";
+import { createSlice } from "@reduxjs/toolkit";
 const productState: any = [];
 const categoryState: any = [];
 
@@ -8,6 +8,7 @@ const productReducer = createSlice({
     initialState: {
         products: productState,
         categorys: categoryState,
+        productDetail: [],
     },
     reducers: {},
     extraReducers(builder) {
@@ -36,6 +37,10 @@ const productReducer = createSlice({
                 if (index !== -1) {
                     state.products[index] = action.payload
                 }
+            })
+            .addCase(getProductById.fulfilled, (state, action) => {
+                console.log(action.payload)
+                state.productDetail = action.payload
             })
     },
 })

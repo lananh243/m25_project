@@ -1,6 +1,12 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
 import axios from "axios"
-
+export const getProductById: any = createAsyncThunk(
+    "products/getProductById",
+    async (id: number) => {
+        const response = await axios.get(`http://localhost:8080/products/${id}`)
+        return response.data
+    }
+)
 export const getAllProduct: any = createAsyncThunk(
     "products/getAllProduct",
     async () => {
