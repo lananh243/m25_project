@@ -28,7 +28,6 @@ import {
 
 export default function Home() {
   const dispatch = useDispatch();
-  const { id } = useParams();
   let userData = JSON.parse(localStorage.getItem("user") || "[]");
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const route = useRouter();
@@ -59,7 +58,6 @@ export default function Home() {
   const productData: any = useSelector(
     (state: any) => state.productReducer.products
   );
-  const product = productData.find((pro: any) => pro.id == id);
   console.log(productData);
   // Chi tiết sản phẩm
   const handleDetail = (id: number) => {
@@ -76,23 +74,27 @@ export default function Home() {
   }, [dispatch, userData.id]);
   // cart
   const handleAddToCart = async (product: any) => {
-    const confirmed = window.confirm(
-      "Bạn có chắc chắn muốn thêm sản phẩm vào giỏ hàng ko ??"
+    // Check if the product is already in the cart
+    const existProduct = cart.find(
+      (item: any) => item.products.id === product.id
     );
-    if (confirmed) {
-      const existProduct = cart.find(
-        (item: any) => item.products.id === product.id
+
+    if (existProduct) {
+      // If product is already in the cart, update the quantity
+      const updatedProduct = {
+        ...existProduct,
+        products: {
+          ...existProduct.products,
+          quantity: existProduct.products.quantity + 1,
+        },
+      };
+      await dispatch(updateCart(updatedProduct));
+    } else {
+      // If product is not in the cart, ask for confirmation
+      const confirmed = window.confirm(
+        "Bạn có chắc chắn muốn thêm sản phẩm vào giỏ hàng không?"
       );
-      if (existProduct) {
-        const updatedProduct = {
-          ...existProduct,
-          products: {
-            ...existProduct,
-            quantity: existProduct.products.quantity + 1,
-          },
-        };
-        await dispatch(updateCart(updatedProduct));
-      } else {
+      if (confirmed) {
         const newCart = {
           idUser: userData.id,
           products: {
@@ -109,15 +111,31 @@ export default function Home() {
       }
     }
   };
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleModal = () => {
-    setIsOpen(!isOpen);
-  };
 
   const handleCart = (id: number) => {
     route.push(`/cart/${id}`);
   };
+  // Đăng xuất
+  const [isLogoutModal, setIsLogoutModal] = useState(false);
+  const handleLogout = () => {
+    setIsLogoutModal(true);
+  };
+  const handleConfirmLogout = () => {
+    localStorage.removeItem("user");
+    setUser(null);
+    route.push("/register");
+    setIsLogoutModal(false); // Ẩn modal sau khi đăng xuất thành công
+  };
+
+  const handleCancelLogout = () => {
+    setIsLogoutModal(false); // Ẩn modal nếu người dùng hủy đăng xuất
+  };
+  useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem("user") || "null");
+    setUser(userData);
+  }, []);
+
+  const handleFilterProduct = () => route.push("/filterProduct");
   return (
     <>
       <div className="h-40 bg-rose-800 flex justify-around">
@@ -163,46 +181,57 @@ export default function Home() {
                 </button>
                 <span className="text-white">0</span>
               </div>
-              {user && (
-                <div
-                  className="relative flex items-center gap-4"
-                  onMouseEnter={handleMouseEnter}
-                  onMouseLeave={handleMouseLeave}
-                >
-                  <button className="h-10 w-10 bg-white flex justify-center items-center rounded-full">
-                    <FontAwesomeIcon icon={faUserTie} className="w-5 h-5" />
-                  </button>
-                  <span className="text-white">{user.name}</span>
-                  {isMenuVisible && (
-                    <div className="absolute top-12 left-0 bg-white text-black rounded-lg shadow-lg w-32">
-                      <div className="absolute -top-2 left-4 w-4 h-4 bg-white transform rotate-45"></div>
-                      <div className="flex flex-col py-2 px-4">
-                        {user ? (
-                          // Nếu đã đăng nhập, hiển thị nút "Đăng xuất"
-                          <button className="text-sm py-1 px-2 hover:bg-gray-200 cursor-pointer rounded-md text-left">
+              <div
+                className="relative flex items-center gap-4"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+              >
+                <button className="h-10 w-10 bg-white flex justify-center items-center rounded-full">
+                  <FontAwesomeIcon icon={faUserTie} className="w-5 h-5" />
+                </button>
+                {user ? (
+                  <>
+                    {/* Hiển thị tên người dùng và menu đăng xuất khi đã đăng nhập */}
+                    <span className="text-white">{user.name}</span>
+                    {isMenuVisible && (
+                      <div className="absolute top-12 left-0 bg-white text-black rounded-lg shadow-lg w-32">
+                        <div className="absolute -top-2 left-4 w-4 h-4 bg-white transform rotate-45"></div>
+                        <div className="flex flex-col py-2 px-4">
+                          <button
+                            className="text-sm py-1 px-2 hover:bg-gray-200 cursor-pointer rounded-md text-left"
+                            onClick={handleLogout}
+                          >
                             Đăng xuất
                           </button>
-                        ) : (
-                          <>
-                            <button
-                              className="text-sm py-1 px-2 hover:bg-gray-200 cursor-pointer rounded-md text-left"
-                              onClick={handleLogin}
-                            >
-                              Đăng nhập
-                            </button>
-                            <button
-                              className="text-sm py-1 px-2 hover:bg-gray-200 cursor-pointer rounded-md text-left mt-1"
-                              onClick={handleRegister}
-                            >
-                              Đăng ký
-                            </button>
-                          </>
-                        )}
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
-              )}
+                    )}
+                  </>
+                ) : (
+                  <>
+                    {/* Hiển thị nút đăng nhập và đăng ký khi chưa đăng nhập */}
+                    {isMenuVisible && (
+                      <div className="absolute top-12 left-0 bg-white text-black rounded-lg shadow-lg w-32">
+                        <div className="absolute -top-2 left-4 w-4 h-4 bg-white transform rotate-45"></div>
+                        <div className="flex flex-col py-2 px-4">
+                          <button
+                            className="text-sm py-1 px-2 hover:bg-gray-200 cursor-pointer rounded-md text-left"
+                            onClick={handleLogin}
+                          >
+                            Đăng nhập
+                          </button>
+                          <button
+                            className="text-sm py-1 px-2 hover:bg-gray-200 cursor-pointer rounded-md text-left mt-1"
+                            onClick={handleRegister}
+                          >
+                            Đăng ký
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
 
               <div className="flex items-center gap-4">
                 <button
@@ -353,7 +382,10 @@ export default function Home() {
       </div>
 
       <div className="justify-center flex">
-        <button className="w-32 h-10 bg-rose-900 rounded-xl font-bold text-white">
+        <button
+          className="w-32 h-10 bg-rose-900 rounded-xl font-bold text-white"
+          onClick={handleFilterProduct}
+        >
           XEM THÊM
         </button>
       </div>
@@ -859,40 +891,37 @@ export default function Home() {
       <div className=" bg-rose-800 h-14 flex items-center">
         <p className="m-40 text-white">Copyrights © 2018 by Lananh Bakery.</p>
       </div>
-      <div>
-        {isOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-            <div className="bg-white rounded p-6 w-1/4 relative ">
-              {/* Nút đóng */}
+      {isLogoutModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50">
+          <div className="relative bg-white p-6 rounded-lg shadow-lg w-96">
+            <button
+              className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+              onClick={handleCancelLogout}
+            >
+              &times;
+            </button>
+            <p className="mb-4">
+              Bạn có chắc chắn muốn đăng xuất tài khoản không?
+            </p>
+            <div className="flex justify-end gap-4">
               <button
-                onClick={() => setIsOpen(false)}
-                className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-2xl"
+                className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded"
+                onClick={handleCancelLogout}
               >
-                &times; {/* Dấu x */}
+                Hủy
               </button>
-              <h2 className="text-lg font-bold">Modal heading</h2>
-              <p>Woohoo, you are reading this text in a modal!</p>
-              <div className="flex justify-end mt-4">
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="bg-gray-400 text-white px-4 py-2 rounded mr-2"
-                >
-                  Close
-                </button>
-                <button
-                  className="bg-blue-500 text-white px-4 py-2 rounded"
-                  onClick={() => {
-                    handleAddToCart(product); // Add product to cart
-                    setIsOpen(false); // Close modal after adding
-                  }}
-                >
-                  Save Changes
-                </button>
-              </div>
+              <button
+                className="px-4 py-2 bg-red-500 text-white hover:bg-red-600 rounded"
+                onClick={handleConfirmLogout}
+              >
+                Đăng xuất
+              </button>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      <div></div>
     </>
   );
 }

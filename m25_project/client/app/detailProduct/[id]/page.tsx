@@ -16,8 +16,14 @@ import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getProductById } from "../../service/product.service";
+import {
+  addToCart,
+  getCartProductById,
+  updateCart,
+} from "@/app/service/cart.service";
 export default function page() {
   const dispatch = useDispatch();
+  let userData = JSON.parse(localStorage.getItem("user") || "[]");
   const route = useRouter();
   const [user, setUser] = useState<any>([]);
   const [isMenuVisible, setIsMenuVisible] = useState(false);
@@ -28,11 +34,10 @@ export default function page() {
     setIsMenuVisible(false);
   };
   useEffect(() => {
-    const userData = localStorage.getItem("user");
     if (!userData) {
       route.push("/login");
     } else {
-      setUser(JSON.parse(userData));
+      setUser(userData);
     }
   }, [route]);
   const handleRegister = () => {
@@ -52,10 +57,51 @@ export default function page() {
       dispatch(getProductById(Number(id)));
     }
   }, [dispatch, id]);
+  const [quantity, setQuantity] = useState(1);
 
-  const handleCart = () => {
-    route.push("/cart");
+  const increaseQuantity = () =>
+    setQuantity((prevQuantity) => prevQuantity + 1);
+  const decreaseQuantity = () =>
+    setQuantity((prevQuantity) => Math.max(prevQuantity - 1, 1));
+  // Cho sản phẩm vào giỏ hàng
+  const cart: any = useSelector((state: any) => state.cartReducer.carts);
+  console.log(cart);
+  useEffect(() => {
+    if (userData.id) {
+      dispatch(getCartProductById(userData.id));
+    }
+  }, [dispatch, userData.id]);
+  // cart
+  const handleAddToCart = async (product: any) => {
+    const existProduct = cart.find((item: any) => item.id === product.id);
+
+    if (existProduct) {
+      const updatedProduct = {
+        ...existProduct,
+        quantity: existProduct.quantity + quantity,
+      };
+      await dispatch(updateCart(updatedProduct));
+    } else {
+      const confirmed = window.confirm(
+        "Bạn có chắc chắn muốn thêm sản phẩm vào giỏ hàng không?"
+      );
+      if (confirmed) {
+        const newCart = {
+          idUser: user?.id,
+          products: {
+            ...product,
+            quantity,
+          },
+        };
+        await dispatch(addToCart(newCart));
+      }
+    }
   };
+
+  const handleCart = (id: number) => {
+    route.push(`/cart/${id}`);
+  };
+
   return (
     <>
       <div className="h-40 bg-rose-800 flex justify-around">
@@ -145,14 +191,14 @@ export default function page() {
               <div className="flex items-center gap-4">
                 <button
                   className="h-10 w-10 bg-white flex justify-center items-center rounded-full"
-                  onClick={handleCart}
+                  onClick={() => handleCart(userData.id)}
                 >
                   <FontAwesomeIcon
                     icon={faShoppingBag}
                     className="w-5 h-5"
                   ></FontAwesomeIcon>
                 </button>
-                <span className="text-white">0</span>
+                <span className="text-white">{cart.length}</span>
               </div>
             </div>
           </div>
@@ -242,18 +288,39 @@ export default function page() {
           </p>
           <hr />
           <p className="py-8">
-            Giá : <b>{product.price}</b>
+            Giá :{" "}
+            <b>
+              {Number(product.price).toLocaleString("vi-VN", {
+                style: "currency",
+                currency: "VND",
+              })}
+            </b>
           </p>
           <div className="flex gap-5">
             <div>Số Lượng</div>
             <div className="flex gap-2">
-              <button className="w-8 h-8 bg-red-300 text-xl rounded">-</button>
-              <button className="w-8 h-8 bg-red-700 text-xl rounded">1</button>
-              <button className="w-8 h-8 bg-red-900 text-xl rounded">+</button>
+              <button
+                className="w-8 h-8 bg-red-300 text-xl rounded"
+                onClick={decreaseQuantity}
+              >
+                -
+              </button>
+              <button className="w-8 h-8 bg-red-700 text-xl rounded">
+                {quantity}
+              </button>
+              <button
+                className="w-8 h-8 bg-red-900 text-xl rounded"
+                onClick={increaseQuantity}
+              >
+                +
+              </button>
             </div>
           </div>
           <div className="my-8 flex gap-9">
-            <button className="bg-rose-800 h-9 w-44 text-white rounded-xl">
+            <button
+              className="bg-rose-800 h-9 w-44 text-white rounded-xl"
+              onClick={() => handleAddToCart(product)}
+            >
               Thêm vào Giỏ hàng
             </button>
             <button className="bg-orange-400 h-9 w-24 text-white rounded-xl">

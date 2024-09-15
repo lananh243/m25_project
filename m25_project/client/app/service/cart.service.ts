@@ -29,3 +29,19 @@ export const updateCart: any = createAsyncThunk(
         return response.data;
     }
 );
+
+
+export const updateCartQuantity = createAsyncThunk(
+    'carts/updateCartQuantity',
+    async ({ id, product }: { id: number; product: any }) => {
+        // Gửi yêu cầu cập nhật toàn bộ thông tin sản phẩm, bao gồm số lượng
+        const response = await axios.patch(`http://localhost:8080/carts/${id}`, {
+            products: {
+                ...product // Gửi toàn bộ thông tin sản phẩm
+            }
+        });
+        return response.data;
+    }
+);
+
+

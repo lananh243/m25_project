@@ -1,19 +1,20 @@
 "use client";
 import {
-  deleteAllProductsFromCartAsync,
-  deleteProductFromCartAsync,
+  addToCart,
   getCartProductById,
-  updateCartQuantity,
+  updateCart,
 } from "@/app/service/cart.service";
-import { AppDispatch } from "@/app/store/store";
 import {
   faAngleDown,
+  faAngleLeft,
+  faAngleRight,
   faEnvelope,
   faHeart,
   faHouse,
   faPhone,
   faSearch,
   faShoppingBag,
+  faShoppingCart,
   faStar,
   faUserTie,
 } from "@fortawesome/free-solid-svg-icons";
@@ -21,6 +22,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import {
+  filterProductsByPriceRange,
+  getAllProduct,
+  searchNameProduct,
+  sortProduct,
+  sortProductByPrice,
+} from "../service/product.service";
+import { getAllCategory } from "../service/category.service";
+import { AppDispatch } from "../store/store";
 export default function page() {
   let userData = JSON.parse(localStorage.getItem("user") || "[]");
   const dispatch = useDispatch<AppDispatch>();
@@ -41,6 +51,7 @@ export default function page() {
   const handleMouseLeave = () => {
     setIsMenuVisible(false);
   };
+
   useEffect(() => {
     const userData = localStorage.getItem("user");
     if (!userData) {
@@ -58,71 +69,97 @@ export default function page() {
   const handleCart = () => {
     route.push("/cart");
   };
-  const [isAllChecked, setIsAllChecked] = useState(false);
-  const [checkedItems, setCheckedItems] = useState<Set<number>>(new Set());
-  const [confirmDelete, setConfirmDelete] = useState(false);
-  const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const checked = e.target.checked;
-    setIsAllChecked(checked);
-    setCheckedItems(
-      checked ? new Set(cart.map((_, index: any) => index)) : new Set()
+  const handleDetail = (id: number) => {
+    route.push(`/detailProduct/${id}`);
+  };
+  const handleAddToCart = async (product: any) => {
+    const confirmed = window.confirm(
+      "Bạn có chắc chắn muốn thêm sản phẩm vào giỏ hàng ko ??"
     );
-  };
-
-  const handleCheckboxChange = (index: number) => {
-    const newCheckedItems = new Set(checkedItems);
-    if (newCheckedItems.has(index)) {
-      newCheckedItems.delete(index);
-    } else {
-      newCheckedItems.add(index);
-    }
-    setCheckedItems(newCheckedItems);
-    setIsAllChecked(newCheckedItems.size === cart.length);
-  };
-  const handleDelete = () => setConfirmDelete(true);
-  const handleConfirmDelete = () => {
-    setConfirmDelete(false);
-    if (checkedItems.size === 0) {
-      dispatch(deleteAllProductsFromCartAsync());
-    } else {
-      const selectedIds = Array.from(checkedItems).map(
-        (index) => cart[index].id
+    if (confirmed) {
+      const existProduct = cart.find(
+        (item: any) => item.products.id === product.id
       );
-      selectedIds.forEach((id) => dispatch(deleteProductFromCartAsync(id)));
-      setCheckedItems(new Set());
-      setIsAllChecked(false);
+      if (existProduct) {
+        const updatedProduct = {
+          ...existProduct,
+          products: {
+            ...existProduct,
+            quantity: existProduct.products.quantity + 1,
+          },
+        };
+        await dispatch(updateCart(updatedProduct));
+      } else {
+        const newCart = {
+          idUser: userData.id,
+          products: {
+            nameProduct: product.nameProduct,
+            price: product.price,
+            image: product.image,
+            code: product.code,
+            categoryId: product.categoryId,
+            quantity: 1,
+            id: product.id,
+          },
+        };
+        await dispatch(addToCart(newCart));
+      }
     }
   };
-  const handleCancelDelete = () => setConfirmDelete(false);
-  // tính tổng tiền
-  const totalPrice = cart.reduce(
-    (total: any, item: any) =>
-      total + item.products.price * item.products.quantity,
-    0
+  //   Lấy sản phẩm ra
+  useEffect(() => {
+    dispatch(getAllProduct());
+    dispatch(getAllCategory());
+  }, [dispatch]);
+  const productData = useSelector(
+    (state: any) => state.productReducer.products
   );
-  // Giảm số lượng sản phẩm trong giỏ hàng
-  const handleDecrease = (item: any) => {
-    if (item.products.quantity > 1) {
-      // Đảm bảo số lượng không giảm xuống dưới 1
-      const newQuantity = item.products.quantity - 1;
-      dispatch(
-        updateCartQuantity({
-          id: item.id,
-          product: { ...item.products, quantity: newQuantity },
-        })
-      );
-    }
+  //   Tìm kiếm sản phẩm
+  const [searchName, setSearchName] = useState("");
+  const handleSearchName = () => {
+    console.log("1111111111", searchName);
+
+    dispatch(searchNameProduct(searchName));
+  };
+  // Sắp xếp
+  const [sortName, setSortName] = useState("");
+  const [sortPrice, setSortPrice] = useState("");
+  const handleSortName = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const order = e.target.value;
+    dispatch(sortProduct(order));
   };
 
-  // Tăng số lượng sản phẩm trong giỏ hàng
-  const handleIncrease = (item: any) => {
-    const newQuantity = item.products.quantity + 1;
-    dispatch(
-      updateCartQuantity({
-        id: item.id,
-        product: { ...item.products, quantity: newQuantity },
-      })
-    );
+  const handleSortPrice = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const order = e.target.value;
+    setSortPrice(order);
+    dispatch(sortProductByPrice(order)); // Correctly typed dispatch
+  };
+
+  // Phân trang
+
+  // Danh mục
+  const categoryData = useSelector(
+    (state: any) => state.categoryReducer.categorys
+  );
+  // const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  //   const category = +e.target.value;
+  //   setSelectedCategory(category);
+  //   dispatch(filterProductsByCategory(category));
+  // };
+  // lọc giá
+
+  // lọc sản phẩm
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  // Lọc sản phẩm dựa trên selectedCategory
+  const filteredProducts = productData.filter((product: any) => {
+    return selectedCategory
+      ? product.categoryId === Number(selectedCategory)
+      : true;
+  });
+  const [minPrice, setMinPrice] = useState<number>(0);
+  const [maxPrice, setMaxPrice] = useState<number>(500);
+  const handleFilter = () => {
+    dispatch(filterProductsByPriceRange({ minPrice, maxPrice }));
   };
 
   return (
@@ -271,105 +308,181 @@ export default function page() {
           className="absolute top-0 left-0 w-full h-full object-cover blur-md opacity-50"
         />
         <div className="absolute inset-0 flex justify-center items-center">
-          <h1 className="text-white text-4xl font-bold">GIỎ HÀNG</h1>
+          <h1 className="text-white text-4xl font-bold">BÁNH TRUNG THU 2024</h1>
         </div>
       </div>
-
-      <div className=" my-32 gap-10 ">
-        <div className=" w-10/12 m-auto">
-          <table className="w-full text-center">
-            <thead>
-              <tr>
-                <th className="p-10">
-                  <input
-                    type="checkbox"
-                    checked={isAllChecked}
-                    onChange={handleSelectAll}
-                  />
-                </th>
-                <th className="text-xl">STT</th>
-                <th className="text-xl">Tên sản phẩm</th>
-                <th className="text-xl">Ảnh sản phẩm</th>
-                <th className="text-xl">Số lượng</th>
-                <th className="text-xl">Tổng giá</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cart.map((item: any, index: number) => (
-                <tr className="border-t-2 border-solid border-gray-300">
-                  <td className="p-10">
-                    <input
-                      type="checkbox"
-                      checked={checkedItems.has(index)}
-                      onChange={() => handleCheckboxChange(index)}
-                    />
-                  </td>
-                  <td className="text-xl">{index + 1}</td>
-                  <td className="text-xl">{item.products.nameProduct}</td>
-                  <td className="flex justify-center items-center p-5">
+      <div className="flex my-28 justify-evenly">
+        <div className="w-72">
+          <div>
+            <select
+              name=""
+              id=""
+              className="w-64 h-9 rounded"
+              value={sortPrice}
+              onChange={handleSortPrice}
+            >
+              <option value="">Lọc theo giá</option>
+              <option value="asc">Từ thấp -&gt; cao</option>
+              <option value="desc">Từ cao -&gt; thấp</option>
+            </select>
+          </div>
+          <br />
+          <div>
+            <input
+              className="w-64"
+              type="range"
+              min={100000}
+              max={500000}
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(+e.target.value)}
+            />
+            <div className="w-64 justify-between flex">
+              <div>Giá trị : {maxPrice}</div>
+              <button
+                className="bg-blue-400 w-11 text-white rounded h-7"
+                onClick={handleFilter}
+              >
+                Lọc
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="flex justify-end w-3/5 gap-8">
+          <div className="w-64 rounded">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Tìm kiếm..."
+                className="w-full h-9 pl-3 pr-10 border rounded"
+                value={searchName}
+                onChange={(e) => setSearchName(e.target.value)}
+              />
+              <FontAwesomeIcon
+                icon={faSearch}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500"
+                onClick={handleSearchName}
+              />
+            </div>
+          </div>
+          <div>
+            <select
+              name=""
+              id=""
+              className="h-9 w-64 rounded"
+              value={sortName}
+              onChange={handleSortName}
+            >
+              <option value="">Sắp xếp sản phẩm</option>
+              <option value="asc">A -&gt; Z</option>
+              <option value="desc">Z -&gt; A</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div className="flex justify-evenly">
+        <div className="w-72 h-96 rounded bg-rose-800 p-12">
+          <div>
+            <p className="text-2xl whitespace-nowrap">DANH MỤC MENU</p>
+            <div className="py-8">
+              {/* Hiển thị nút cho từng danh mục */}
+              <p
+                onClick={() => setSelectedCategory(null)}
+                className={`py-2 w-56 cursor-pointer ${
+                  !selectedCategory ? "bg-blue-400 text-white" : ""
+                }`}
+              >
+                Tất cả danh mục
+              </p>
+              {categoryData.map((category: any) => (
+                <p
+                  key={category.id}
+                  onClick={() => setSelectedCategory(category.id.toString())}
+                  className={` py-2 w-56 cursor-pointer ${
+                    selectedCategory === category.id.toString()
+                      ? "bg-blue-400 text-white"
+                      : ""
+                  }`}
+                >
+                  {category.name}
+                </p>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="w-8/12">
+          <div className="flex flex-wrap max-w-screen-xl mx-auto gap-10">
+            {filteredProducts.length > 0 ? (
+              filteredProducts.map((product: any) => {
+                return (
+                  <div
+                    className="w-72 overflow-hidden rounded-xl shadow-lg mb-12 bg-white"
+                    key={product.id}
+                  >
                     <img
-                      src={item.products.image}
+                      src={product.image}
                       alt=""
-                      className="w-48 h-48 rounded"
+                      className="hover:scale-105 transition-transform duration-300"
                     />
-                  </td>
-                  <td>
-                    <div className="flex justify-center gap-3">
-                      <button
-                        className="w-7 h-7 bg-red-400 rounded text-2xl text-white flex justify-center items-center"
-                        onClick={() => handleDecrease(item)}
+                    <div className="py-6">
+                      <h1
+                        onClick={() => handleDetail(product.id)}
+                        className="text-xl font-bold text-center hover:text-gray-500 cursor-pointer"
                       >
-                        -
-                      </button>
-                      <span className="text-xl">{item.products.quantity}</span>
-                      <button
-                        className="w-7 h-7 bg-red-400 rounded text-2xl text-white flex justify-center items-center"
-                        onClick={() => handleIncrease(item)}
-                      >
-                        +
+                        {product.nameProduct}
+                      </h1>
+                      <p className="text-center">{product.code}</p>
+                    </div>
+                    <div className="flex w-64 justify-between">
+                      <div className="flex ">
+                        <button className="bg-yellow-600 w-32 h-10 font-bold text-white">
+                          {product.price}
+                        </button>
+                        <button
+                          className="h-10 w-10 bg-rose-800 flex justify-center items-center"
+                          onClick={() => handleAddToCart(product)}
+                        >
+                          <FontAwesomeIcon
+                            icon={faShoppingCart}
+                            className=" h-5 w-5 text-white"
+                          ></FontAwesomeIcon>
+                        </button>
+                      </div>
+                      <button>
+                        <FontAwesomeIcon
+                          icon={faHeart}
+                          className="text-2xl text-red-700"
+                        ></FontAwesomeIcon>
                       </button>
                     </div>
-                  </td>
-                  <td className="text-xl">
-                    {Number(item.products.price).toLocaleString("vi-VN", {
-                      style: "currency",
-                      currency: "VND",
-                    })}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-            <tfoot>
-              <tr className="border-t-2 border-solid border-gray-300">
-                <td className="p-10">Xóa {checkedItems.size} sản phẩm</td>
-                <td
-                  colSpan={5}
-                  className="text-right pr-5 text-xl font-extrabold"
-                >
-                  Tổng tiền :{" "}
-                  <span>
-                    {totalPrice.toLocaleString("vi-VN", {
-                      style: "currency",
-                      currency: "VND",
-                    })}
-                  </span>
-                </td>{" "}
-              </tr>
-              <tr>
-                <td colSpan={6} className="text-right px-4">
-                  <button
-                    className="bg-red-400 h-8 w-36 rounded text-lg text-white"
-                    onClick={handleDelete}
-                  >
-                    Xóa sản phẩm
-                  </button>
-                  <button className="w-32 h-8 bg-blue-400 text-lg rounded text-white ml-8">
-                    Thanh toán
-                  </button>
-                </td>
-              </tr>
-            </tfoot>
-          </table>
+                  </div>
+                );
+              })
+            ) : (
+              <p>Không có sản phẩm nào trong danh mục này.</p>
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="flex justify-evenly my-14">
+        <div className="w-72"></div>
+        <div className="w-8/12">
+          <div className="flex justify-center gap-5">
+            <button className="w-8 h-8 bg-rose-800 rounded text-white">
+              <FontAwesomeIcon icon={faAngleLeft}></FontAwesomeIcon>
+            </button>
+            <button className="w-8 h-8 bg-rose-800 rounded text-white">
+              1
+            </button>
+            <button className="w-8 h-8 bg-rose-800 rounded text-white">
+              2
+            </button>
+            <button className="w-8 h-8 bg-rose-800 rounded text-white">
+              3
+            </button>
+            <button className="w-8 h-8 bg-rose-800 rounded text-white">
+              <FontAwesomeIcon icon={faAngleRight}></FontAwesomeIcon>
+            </button>
+          </div>
         </div>
       </div>
       <div className="relative w-full">
@@ -485,28 +598,6 @@ export default function page() {
       <div className=" bg-rose-800 h-14 flex items-center">
         <p className="m-40 text-white">Copyrights © 2018 by Lananh Bakery.</p>
       </div>
-
-      {confirmDelete && (
-        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-4 border rounded shadow-lg z-50">
-          <p className="text-lg">
-            Bạn có chắc chắn muốn xóa sản phẩm đã chọn hoặc xóa tất cả?
-          </p>
-          <div className="flex justify-end mt-4">
-            <button
-              onClick={handleConfirmDelete}
-              className="bg-red-400 text-white px-4 py-2 rounded mr-2"
-            >
-              Xóa
-            </button>
-            <button
-              onClick={handleCancelDelete}
-              className="bg-gray-400 text-white px-4 py-2 rounded"
-            >
-              Hủy
-            </button>
-          </div>
-        </div>
-      )}
     </>
   );
 }
